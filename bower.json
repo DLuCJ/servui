@@ -1,0 +1,28 @@
+{
+  "name": "servui",
+  "authors": [
+    "Daniel Lu"
+  ],
+  "description": "Wowza SEM Lite",
+  "main": "app.js",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "requirejs": "^2.3.3",
+    "bootstrap": "^3.3.7",
+    "selectize": "^0.12.4",
+    "es6-promise": "^4.0.5",
+    "underscore": "^1.8.3",
+    "eventEmitter": "^5.1.0",
+    "golden-layout": "^1.5.7"
+  }
+}
