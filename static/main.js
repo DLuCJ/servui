@@ -165,10 +165,13 @@ define(function (require) {
 		$.ajax({
 		    type: 'POST',
 		    url: 'delapp',
-		    dataType: 'application/json',
+		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
-		    success: (function (result) {alert(JSON.stringify(result));}),
+		    success: (function (result) {
+			var status = JSON.parse(result);
+			alert(JSON.stringify(status));
+		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
@@ -182,7 +185,7 @@ define(function (require) {
 		$.ajax({
 		    type: 'POST',
 		    url: 'restartapp',
-		    dataType: 'application/json',
+		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
 		    success: (function (result) {alert(JSON.stringify(result));}),
@@ -213,21 +216,30 @@ define(function (require) {
 		final_input = input.val();
 	    });
 
-	    var toggleButton = $( '<button>Create Application</button>' ).click( function () {
+	    var toggleButton = $( '<button>Create Car</button>' ).click( function () {
 		if (!final_input || final_input === "Enter car name") {
 		    alert("Enter a car name");
 		} else {
 		    var request = {
-			appname: input.val()
+			appname: final_input
 		    };
 		    
 		    $.ajax({
 			type: 'POST',
 			url: 'makeapp',
-			dataType: 'application/json',
+			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(request),
-			success: (function (result) {alert(JSON.stringify(result));}),
+			success: (function (result) {
+			    var status = JSON.parse(result);
+			    
+			    if (status.success === true) {
+				alert("Successfully added car: " + final_input );
+				addMenuItem( final_input, final_input );
+			    } else {
+				alert("Failed to add car: " + JSON.stringify(status));
+			    }
+			}),
 			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 			cache: false
 		    });
@@ -278,7 +290,7 @@ define(function (require) {
 		    $.ajax({
 			type: 'POST',
 			url: 'makesf',
-			dataType: 'application/json',
+			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(request),
 			success: (function (result) {alert(JSON.stringify(result));}),

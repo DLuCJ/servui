@@ -609,6 +609,7 @@ function CreateOrModifyApplication (application_id, modify) {
 		"clientStreamReadAccess": "*",
 		"clientStreamWriteAccess": "*",
 		"description" : "A-UGV endpoint",
+		"httpCORSHeadersEnabled" : true,
 		"streamConfig" : {
 		    "restURI": urlbase + urlpath + application_id + "/streamconfiguration",
 		    "streamType": "live"
@@ -841,12 +842,32 @@ FindApplications()
 	    })
 	    .post('/makeapp', function (req, res) {
 		logger.info("Received in makeapp:");
-		logger.info(JSON.stringify(req.body));
 
+		var application = req.body;
+		var application_name = application.appname;
+		CreateOrModifyApplication( application_name )
+		    .then(function(response) {
+			UpdateAdvApplication( application_name , 6 )
+			    .then(function(response) {
+				RestartApplication(application_name)
+				    .then(function(response) {
+					FindApplications().then(UpdateApplications);
+					res.json(JSON.stringify(response));
+				    });
+			    });
+		    });
 	    })
 	    .post('/delapp', function (req, res) {
 		logger.info("Received in delapp:");
-		logger.info(JSON.stringify(req.body));
+		
+		var application = req.body;
+		var application_name = application.appname;
+		DeleteApplication(application_name)
+		    .then(function(response) {
+			logger.info(JSON.stringify(response));
+			res.json(JSON.stringify(response));
+			FindApplications().then(UpdateApplications);
+		    });
 	    })
 	    .post('/restartapp', function (req, res) {
 		logger.info("Received in restartapp:");
