@@ -844,6 +844,14 @@ FindApplications()
 		logger.info(JSON.stringify(req.body));
 
 	    })
+	    .post('/delapp', function (req, res) {
+		logger.info("Received in delapp:");
+		logger.info(JSON.stringify(req.body));
+	    })
+	    .post('/restartapp', function (req, res) {
+		logger.info("Received in restartapp:");
+		logger.info(JSON.stringify(req.body));
+	    })				
 	    .post('/delsf', function (req, res) {
 		logger.info("Received in delsf:");
 		logger.info(JSON.stringify(req.body));

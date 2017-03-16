@@ -145,12 +145,61 @@ define(function (require) {
 	    container.getElement().append('<br></br>');
 	    container.getElement().append('<br></br>');
 	    container.getElement().append( delete_sf_btn );
-	    container.getElement().append('&nbsp;&nbsp;&nbsp;');
+	    container.getElement().append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 	    container.getElement().append( connect_sf_btn );
-	    container.getElement().append('&nbsp;&nbsp;&nbsp;');
+	    container.getElement().append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 	    container.getElement().append( disconnect_sf_btn );
 	});
 
+	myLayout.registerComponent( 'confcar', function( container, state ){
+	    container.getElement().html( '<h2>' + state.text + '</h2>');
+	    container.getElement().append('<li></li>');
+
+	    var final_appname = state.text;
+	    
+	    var del_car_btn = $( '<button>Delete Car</button>' ).click( function () {
+		var request = {
+		    appname: final_appname
+		};
+		
+		$.ajax({
+		    type: 'POST',
+		    url: 'delapp',
+		    dataType: 'application/json',
+		    contentType: 'application/json',
+		    data: JSON.stringify(request),
+		    success: (function (result) {alert(JSON.stringify(result));}),
+		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
+		    cache: false
+		});
+	    });
+
+	    var restart_car_btn = $( '<button>Restart Car (disconnects all streams)</button>' ).click( function () {
+		var request = {
+		    appname: final_appname
+		};
+		
+		$.ajax({
+		    type: 'POST',
+		    url: 'restartapp',
+		    dataType: 'application/json',
+		    contentType: 'application/json',
+		    data: JSON.stringify(request),
+		    success: (function (result) {alert(JSON.stringify(result));}),
+		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
+		    cache: false
+		});
+	    });
+
+	    container.getElement().append( '<br></br>');
+	    container.getElement().append( '<br></br>');
+	    container.getElement().append( restart_car_btn );
+	    container.getElement().append( '<br></br>');
+	    container.getElement().append( '<br></br>');
+	    container.getElement().append( del_car_btn );
+	    
+	});
+	
 	myLayout.registerComponent( 'addcar', function( container, state ){
 	    var final_input = null;
 
@@ -257,13 +306,6 @@ define(function (require) {
 	    var element = $( '<li>' + text + '</li>' );
 	    $( '#menuContainer' ).append( element );
 	    
-	    var sf = {
-		title: title,
-		type: 'component',
-		componentName: 'sf',
-		componentState: { text: text }
-	    };
-
 	    var sfconfig = {
 		title: title,
 		type: 'component',
@@ -271,14 +313,22 @@ define(function (require) {
 		componentState: { text: text }
 	    };
 
+	    var carconfig = {
+		title: title,
+		type: 'component',
+		componentName: 'confcar',
+		componentState: { text: text }
+	    };
+	    
 	    function AddStreamFileWindows(streamfiles) {
 		
 		_.each(streamfiles, function (streamfile) {
+		    var streamfile_name = RemoveTag(streamfile.id);
 		    var sf = {
-			title: title,
+			title: title + " : " + streamfile_name,
 			type: 'component',
 			componentName: 'sf',
-			componentState: { appname: title, text: RemoveTag(streamfile.id) }
+			componentState: { appname: title, text: streamfile_name }
 		    };
 		    
 		    myLayout2.root.contentItems[ 0 ].addChild( sf );
@@ -305,6 +355,7 @@ define(function (require) {
 		});
 		
 		myLayout.root.contentItems[ 0 ].addChild( sfconfig );
+		myLayout.root.contentItems[ 0 ].addChild( carconfig );
 	    });
 	};
 	
