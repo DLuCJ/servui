@@ -97,7 +97,15 @@ define(function (require) {
 		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
-		    success: (function (result) {alert(JSON.stringify(result));}),
+		    success: (function (result) {
+			var status = JSON.parse(result);
+			
+			if (status.success === true) {
+			    alert("Successfully deleted");
+			} else {
+			    alert("Failed to delete");
+			}
+		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
@@ -115,7 +123,15 @@ define(function (require) {
 		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
-		    success: (function (result) {alert(JSON.stringify(result));}),
+		    success: (function (result) {
+			var status = JSON.parse(result);
+			
+			if (status.success === true) {
+			    alert("Successfully connected");
+			} else {
+			    alert("Failed to connect");
+			}
+		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
@@ -133,7 +149,15 @@ define(function (require) {
 		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
-		    success: (function (result) {alert(JSON.stringify(result));}),
+		    success: (function (result) {
+			var status = JSON.parse(result);
+			
+			if (status.success === true) {
+			    alert("Successfully disconnected");
+			} else {
+			    alert("Failed to disconnect");
+			}
+		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
@@ -188,7 +212,15 @@ define(function (require) {
 		    dataType: 'json',
 		    contentType: 'application/json',
 		    data: JSON.stringify(request),
-		    success: (function (result) {alert(JSON.stringify(result));}),
+		    success: (function (result) {
+			var status = JSON.parse(result);
+
+			if (status.success === true) {
+			    alert("Successfully restarted");
+			} else {
+			    alert("Failed to restart");
+			}
+		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
