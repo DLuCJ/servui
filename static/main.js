@@ -50,7 +50,7 @@ define(function (require) {
 	    
 	    var final_appname = state.appname;
 	    var final_sfname = state.text;
-	    var final_uri = null;
+	    var final_uri = state.current_uri;
 
 	    var uri_label = $( '<label>Enter URI</label>');
 	    var uri_input = $( '<input type="text" />' );

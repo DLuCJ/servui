@@ -249,28 +249,6 @@ function UpdateStreamFile(application_id, streamfile_id, rtsp_uri) {
 			"sectionName": "Common",
 			"section": null,
 			"documented": true
-		    },
-		    {
-			"enabled": true,
-			"canRemove": true,
-			"name": "streamTimeout",
-			"value": "0",
-			"defaultValue": "12000",
-			"type": "Integer",
-			"sectionName": "Common",
-			"section": null,
-			"documented": true
-		    },
-		    {
-			"enabled": true,
-			"canRemove": true,
-			"name": "reconnectWaitTime",
-			"value": "0",
-			"defaultValue": "3000",
-			"type": "Integer",
-			"sectionName": "Common",
-			"section": null,
-			"documented": true
 		    }
 		]
 	    });
@@ -477,6 +455,32 @@ function UpdateAdvApplication (application_id, attempted_base_latency_secs) {
 	    
 	    var app_data = JSON.stringify ({
 		"restURI": urlbase + urlpath + application_id + "/adv",
+		 "modules": [
+		     {
+			 "order": 0,
+			 "name": "base",
+			 "description": "Base",
+			 "class": "com.wowza.wms.module.ModuleCore"
+		     },
+		     {
+			 "order": 1,
+			 "name": "logging",
+			 "description": "Client Logging",
+			 "class": "com.wowza.wms.module.ModuleClientLogging"
+		     },
+		     {
+			 "order": 2,
+			 "name": "flvplayback",
+			 "description": "FLVPlayback",
+			 "class": "com.wowza.wms.module.ModuleFLVPlayback"
+		     },
+		     {
+			 "order": 3,
+			 "name": "ModuleCoreSecurity",
+			 "description": "Core Security Module for Applications",
+			 "class": "com.wowza.wms.security.ModuleCoreSecurity"
+		     }
+		 ],
 		 "advancedSettings": [
 		     {
 			 "enabled": true,
@@ -487,6 +491,28 @@ function UpdateAdvApplication (application_id, attempted_base_latency_secs) {
 			 "type": "Integer",
 			 "sectionName": "mpegdashstreamingpacketizer",
 			 "section": "/Root/Application/LiveStreamPacketizer",
+			 "documented": true
+		     },
+		     {
+			 "enabled": true,
+			 "canRemove": false,
+			 "name": "securityPublishRequirePassword",
+			 "value": true,
+			 "defaultValue": true,
+			 "type": "Boolean",
+			 "sectionName": "Application",
+			 "section": "/Root/Application",
+			 "documented": true
+		     },
+		     {
+			 "enabled": true,
+			 "canRemove": false,
+			 "name": "pushPublishMapPath",
+			 "value": "${com.wowza.wms.context.VHostConfigHome}/conf/${com.wowza.wms.context.Application}/PushPublishMap.txt",
+			 "defaultValue": null,
+			 "type": "String",
+			 "sectionName": "Application",
+			 "section": "/Root/Application",
 			 "documented": true
 		     }
 		 ]
@@ -654,9 +680,19 @@ function CreateOrModifyApplication (application_id, modify) {
 		"clientStreamWriteAccess": "*",
 		"description" : "A-UGV endpoint",
 		"httpCORSHeadersEnabled" : true,
+		"applicationTimeout": 60000,
+		"pingTimeout": 12000,
+		"maxRTCPWaitTime": 12000,
+		"vodTimedTextProviders": [],
 		"streamConfig" : {
 		    "restURI": urlbase + urlpath + application_id + "/streamconfiguration",
-		    "streamType": "live"
+		    "streamType": "live",
+		    "liveStreamPacketizer": [
+			"cupertinostreamingpacketizer",
+			"smoothstreamingpacketizer",
+			"sanjosestreamingpacketizer",
+			"mpegdashstreamingpacketizer"
+		    ]
 		}
 	    });
 
