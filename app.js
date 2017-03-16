@@ -966,20 +966,10 @@ FindApplications()
 		var application_name = data.appname;
 		var streamfile_name = data.sfname;
 
-		//					ConnectStreamFile("test1", "rtsp60")
-//					    .then(function(response) {
-//						logger.info(JSON.stringify(response));
-//						DisconnectStreamFile("test1", "rtsp60")
-//						    .then(function(response) {
-//							logger.info(JSON.stringify(response));
-//							DeleteStreamFile("fromjs", "fromjsstream")
-//							    .then(function(response) {
-//								logger.info(JSON.stringify(response));
-//							    });
-//						    });
-//					    });
-
-
+		DeleteStreamFile(application_name, streamfile_name)
+		    .then(function(response) {
+			res.json(JSON.stringify(response));
+		    });
 	    })
 	    .post('/connectsf', function (req, res) {
 		logger.info("Received in connectsf:");

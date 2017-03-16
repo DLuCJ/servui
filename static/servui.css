@@ -5,15 +5,19 @@
 
 .navbar {
     border-radius: 0;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
+}
+
+#lang-dropdown {
+    min-width: 5em;
 }
 
 .navbar-inverse {
-    background-color: #bebada;
+    background-color: #226;
 }
 
 .navbar-inverse .navbar-brand {
-    color: #ffffb3;
+    color: #ddd;
     font-weight: bold;
 }
 
