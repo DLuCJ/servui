@@ -55,7 +55,7 @@ define(function (require) {
 	    var uri_label = $( '<label>Enter URI</label>');
 	    var uri_input = $( '<input type="text" />' );
 	    
-	    uri_input.val( "" );
+	    uri_input.val( state.current_uri );
 	    uri_input.appendTo(uri_label);
 	    
 	    uri_input.on( 'change', function(){
@@ -325,7 +325,25 @@ define(function (require) {
 			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(request),
-			success: (function (result) {alert(JSON.stringify(result));}),
+			success: (function (result) {
+			    var status = JSON.parse(result);
+			    
+			    if (status.success === true) {
+				alert("Successfully add streamfile: " + final_sfname);
+				
+				var thissf = {
+				    title: title + " : " + streamfile_name,
+				    type: 'component',
+				    componentName: 'sf',
+				    componentState: { appname: final_appname, text: final_sfname }
+				};
+
+				myLayout2.root.contentItems[ 0 ].addChild( thissf );
+				
+			    } else {
+				alert("Failed to disconnect");
+			    }
+			}),
 			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 			cache: false
 		    });
@@ -367,15 +385,36 @@ define(function (require) {
 	    function AddStreamFileWindows(streamfiles) {
 		
 		_.each(streamfiles, function (streamfile) {
+		    
 		    var streamfile_name = RemoveTag(streamfile.id);
-		    var sf = {
-			title: title + " : " + streamfile_name,
-			type: 'component',
-			componentName: 'sf',
-			componentState: { appname: title, text: streamfile_name }
+
+		    var request = {
+			appname: title,
+			sfname: streamfile.id
 		    };
 		    
-		    myLayout2.root.contentItems[ 0 ].addChild( sf );
+		    $.ajax({
+			type: 'POST',
+			url: 'urisf',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(request),
+			success: (function (result) {
+			    var data = JSON.parse(result);
+			    
+			    var sf = {
+				title: title + " : " + streamfile_name,
+				type: 'component',
+				componentName: 'sf',
+				componentState: { current_uri: data.uri, appname: title, text: streamfile_name }
+			    };
+				
+			    myLayout2.root.contentItems[ 0 ].addChild( sf );
+			}),
+			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
+			cache: false
+		    });
+		    
 		});
 	    }
 	    

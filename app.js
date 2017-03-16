@@ -419,6 +419,50 @@ function FindStreamFiles(application) {
         });
 }
 
+function FindStreamFilesAdv(application_name, streamfile_name) {
+    logger.info("Fetching rtsp uri for " + streamfile_name + " at " + wowza_hostname + ":" + wowza_port);
+
+    var urlbase = "http://" + wowza_hostname + ":" + wowza_port;
+    var urlpath = "/v2/servers/_defaultServer_/vhosts/_defaultVHost_/applications/";
+
+    function FetchStreamFilesAdv () {
+	return new Promise(function (fulfill, reject) {
+
+            var request = http.get({
+		hostname: wowza_hostname,
+		port: wowza_port,
+		path: urlpath + application_name + "/streamfiles/" + streamfile_name + "/adv",
+		headers: {
+                    'Accept': 'application/json'
+		}
+            }, function (res) {
+		var str = '';
+		res.on('data', function (chunk) {
+                    str += chunk;
+		});
+		res.on('end', function () {
+		    var response = JSON.parse(str);
+                    fulfill(response);
+		});
+            }).on('error', function (e) {
+		reject(e);
+            }).on('timeout', function () {
+		reject("timeout");
+            });
+            request.setTimeout(1000);
+	});
+    }
+
+    return RetryPromise(FetchStreamFilesAdv,
+			wowza_hostname + ":" + wowza_port,
+			5,
+			500)
+	.catch(function () {
+            logger.warn("Unable to contact " + wowza_hostname + ":" + wowza_port + "; skipping");
+            return [];
+        });
+}
+
 // TODO: offer more update options?
 // Takes string, float
 function UpdateAdvApplication (application_id, attempted_base_latency_secs) {
@@ -702,7 +746,7 @@ function FindApplications() {
 
 FindApplications()
     .then(function(applications) {	
-
+	
 	// ***********************************************************************
 //	logger.info("testing promise....");
 //	applications.map(function(app) {
@@ -830,6 +874,7 @@ FindApplications()
 			    
 			    FindStreamFiles(good_app_arr[0])
 				.then(function(streamfiles) {
+				    
 				    var sf_res = JSON.stringify({
 					sf : streamfiles
 				    });
@@ -928,9 +973,36 @@ FindApplications()
 		logger.info(JSON.stringify(req.body));
 
 	    })
+	    .post('/urisf', function (req, res) {
+		logger.info("Received in urisf:");
+		var data = req.body;
+		var application_name = data.appname;
+		var streamfile_name = data.sfname;
+
+		FindStreamFilesAdv(application_name, streamfile_name)
+		    .then(function(response) {
+			logger.info(JSON.stringify(response.advancedSettings[0].value));
+			var uri_res = JSON.stringify({
+			    "uri": response.advancedSettings[0].value
+			});
+
+			res.json(uri_res);
+		    });
+	    })
 	    .post('/makesf', function (req, res) {
 		logger.info("Received in makesf:");
-		logger.info(JSON.stringify(req.body));
+		var data = req.body;
+		var application_name = data.appname;
+		var streamfile_name = data.sfname;
+		var uri = data.uri;
+		
+		InitializeStreamFile(application_name, streamfile_name)
+		    .then(function(response) {
+			UpdateStreamFile(application_name, streamfile_name, uri)
+			    .then(function(response) {
+				res.json(JSON.stringify(response));
+			    });
+		    });
 	    });
 	
 	logger.info("**************************************");
