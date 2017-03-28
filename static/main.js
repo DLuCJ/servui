@@ -78,7 +78,15 @@ define(function (require) {
 			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(request),
-			success: (function (result) {alert(JSON.stringify(result));}),
+			success: (function (result) {
+			    var status = JSON.parse(result);
+			    
+			    if (status.success === true) {
+				alert("Successfully updated streamfile");
+			    } else {
+				alert("Failed to update streamfile");
+			    }
+			}),
 			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 			cache: false
 		    });

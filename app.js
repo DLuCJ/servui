@@ -996,8 +996,16 @@ FindApplications()
 	    })
 	    .post('/updatesf', function (req, res) {
 		logger.info("Received in updatesf:");
-		logger.info(JSON.stringify(req.body));
 
+		var data = req.body;
+		var application_name = data.appname;
+		var streamfile_name = data.sfname;
+		var uri = data.uri;
+		
+		UpdateStreamFile(application_name, streamfile_name, uri)
+		    .then(function(response) {
+			res.json(JSON.stringify(response));
+		    });
 	    })
 	    .post('/urisf', function (req, res) {
 		logger.info("Received in urisf:");
