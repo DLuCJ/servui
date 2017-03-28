@@ -42,7 +42,7 @@ define(function (require) {
 	};
 	
 	var myLayout = new window.GoldenLayout( config, $('#layoutContainer') );
-	var myLayout2 = new window.GoldenLayout( config2, $('#layoutContainer2') );
+	var myLayout2 = new GoldenLayout( config2, $('#layoutContainer2') );
 
 	myLayout2.registerComponent( 'sf', function( container, state ){
 	    container.getElement().html( '<h2>' + state.text + '</h2>');
@@ -110,6 +110,7 @@ define(function (require) {
 			
 			if (status.success === true) {
 			    alert("Successfully deleted");
+			    container.close();
 			} else {
 			    alert("Failed to delete");
 			}
@@ -182,7 +183,7 @@ define(function (require) {
 	    container.getElement().append('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 	    container.getElement().append( disconnect_sf_btn );
 	});
-
+	
 	myLayout.registerComponent( 'confcar', function( container, state ){
 	    container.getElement().html( '<h2>' + state.text + '</h2>');
 	    container.getElement().append('<li></li>');
@@ -202,7 +203,12 @@ define(function (require) {
 		    data: JSON.stringify(request),
 		    success: (function (result) {
 			var status = JSON.parse(result);
-			alert(JSON.stringify(status));
+
+			 if (status.success === true) {
+			     alert("Successfully deleted car: " + final_appname);
+			 } else {
+			     alert("Failed to delete car");
+			 }
 		    }),
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
@@ -337,19 +343,18 @@ define(function (require) {
 			    var status = JSON.parse(result);
 			    
 			    if (status.success === true) {
-				alert("Successfully add streamfile: " + final_sfname);
-				
-				var thissf = {
-				    title: title + " : " + streamfile_name,
+
+				var sf = {
+				    title: final_appname + " : " + final_sfname,
 				    type: 'component',
 				    componentName: 'sf',
-				    componentState: { appname: final_appname, text: final_sfname }
+				    componentState: { current_uri: final_uri, appname: final_appname, text: final_sfname }
 				};
+				myLayout2.root.contentItems[ 0 ].addChild( sf );
+				alert("Successfully add streamfile: " + final_sfname);
 
-				myLayout2.root.contentItems[ 0 ].addChild( thissf );
-				
 			    } else {
-				alert("Failed to disconnect");
+				alert("Failed to add streamfile");
 			    }
 			}),
 			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
@@ -368,9 +373,9 @@ define(function (require) {
 	// ***************************************************************************************
 	// ***************************************************************************************
 	// ***************************************************************************************
-	
-	myLayout.init();
+
 	myLayout2.init();
+	myLayout.init();
 	
 	var addMenuItem = function( title, text ) {
 	    var element = $( '<li>' + text + '</li>' );

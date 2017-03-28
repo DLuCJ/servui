@@ -1,0 +1,65 @@
+KNOWN BUGS / ISSUES
+
+TLDR: This is not production-ready in any sense.  Use as a Proof of Concept.
+
+Servui:
+
+* It may be difficult to see the text fields on some screens, as the color scheme is very dark.
+
+* UI may be unintuitive
+
+* Ugly
+
+* Marked lack of tests
+
+* frontend UI code is in need of refactoring
+
+* Error messages do not always properly differentiate between Servui errors and Wowza errors.
+  For example, adding an existing car (Wowza error) may notify the user that the operation was successful
+  because the client properly received a response from Wowza through Servui. The response itself
+  notes that the operation failed. 
+
+* The browser window serving Wowza Engine Manager must be closed / reopened for changes to
+  applications (creation / deletion) made from Servui to be properly displayed.  
+
+* Text field inputs do not properly escape characters.  Therefore, creating a car or stream file, with
+  name "sharp 1" fails (hangs nodejs), for example.
+
+* In general, input validation is lacking.
+
+* Requires one application to be present in Wowza at startup due to the initial call to FindApplications()
+
+* Deleting an application (car) does not properly update Servui's UI to match.  Click the Servui link at the top
+  of the page to refresh the layout.
+
+* The screen layout is not refreshed upon new actions.  This means that continuous use of the UI will clutter
+  up the screen with windows.  Click the Servui link at the top of the page to refresh the layout.
+
+
+Client application:
+
+* It may be difficult to see the text fields on some screens, as the color scheme is very dark.
+
+* UI may be unintuitive
+
+* Ugly
+
+* Marked lack of tests
+
+* frontend UI code is in need of refactoring
+
+* Connections to Wowza are not properly disconnected.  That is, the initial loading of streams
+  and any subsequent loads (clicking on one of the thumbnails to switch streams) continue to stack up
+  connections to Wowza.  It does not matter whether or not the stream has been previously connected to.
+  For example, if the user is viewing a stream, then clicks on a new stream, then returns to the
+  original stream, the client adds two connections to Wowza.
+  
+  Switching to a different A-UGV does not help this situation.
+  
+  As such, the number of connections stacks up very quickly during light use.
+  The connections are released only when the client HTTP server exits.
+
+* Does not detect the actual number of existing stream files per car.  Instead, it always tries to load
+  four streams.  If there are less than four streams, the empty thumbnails show a black screen with a
+  perpetually spinning icon in the center of the thumbnail.
+
