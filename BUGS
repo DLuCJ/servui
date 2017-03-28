@@ -32,8 +32,9 @@ Servui:
 * Deleting an application (car) does not properly update Servui's UI to match.  Click the Servui link at the top
   of the page to refresh the layout.
 
-* The screen layout is not refreshed upon new actions.  This means that continuous use of the UI will clutter
-  up the screen with windows.  Click the Servui link at the top of the page to refresh the layout.
+* The screen layout is not refreshed properly upon new actions.  This means that continuous use of the
+  UI will clutter up the screen with windows sometimes, delete windows properly sometimes, and otherwise
+  behave unpredictably.  Click the Servui link at the top of the page to properly refresh the layout.
 
 
 Client application:

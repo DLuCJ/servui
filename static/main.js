@@ -421,7 +421,6 @@ define(function (require) {
 				componentName: 'sf',
 				componentState: { current_uri: data.uri, appname: title, text: streamfile_name }
 			    };
-				
 			    myLayout2.root.contentItems[ 0 ].addChild( sf );
 			}),
 			error: (function (xhr, e_status, error) {alert("Error: " + error);}),
@@ -449,7 +448,22 @@ define(function (require) {
 		    error: (function (xhr, e_status, error) {alert("Error: " + error);}),
 		    cache: false
 		});
-		
+
+		// Attempt to clear both layouts when switching stream views.
+		// This is something I don't quite understand about GoldenLayout yet
+
+		// The logic here should be: I've appended a bunch of children to
+		// myLayout(2).root.contentItems[ 0 ]
+		// Then I should be able to call removeChild() each item in its contentItems
+		// Per the docs, contentItems is "An array of items that are children of this item"
+		_.each(myLayout2.root.contentItems[ 0 ].contentItems, function (item) {
+	    	    myLayout2.root.contentItems[ 0 ].removeChild(item);
+		});
+
+		_.each(myLayout.root.contentItems[ 0 ].contentItems, function (item) {
+	    	    myLayout.root.contentItems[ 0 ].removeChild(item);
+		});
+
 		myLayout.root.contentItems[ 0 ].addChild( sfconfig );
 		myLayout.root.contentItems[ 0 ].addChild( carconfig );
 	    });
@@ -467,12 +481,17 @@ define(function (require) {
 	    };
 	    
 	    element.click(function(){
+
+		_.each(myLayout.root.contentItems[ 0 ].contentItems, function (item) {
+	    	    myLayout.root.contentItems[ 0 ].removeChild(item);
+		});
+
 		myLayout.root.contentItems[ 0 ].addChild( newItemConfig );
 	    });
 	};
 
 	addAppAddItem("Add Car", "Add Car");
-	
+
 	_.each(application_list.applications, function (app) {
 	    	addMenuItem( app.id, app.id ); 
 	});
